@@ -1,16 +1,16 @@
-import React from 'react';
-// import { useHistory } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
-// import filesize from 'filesize';
+import filesize from 'filesize';
 
 import Header from '../../components/Header';
-// import FileList from '../../components/FileList';
+import FileList from '../../components/FileList';
 import Upload from '../../components/Upload';
 
 import { Container, Title, ImportFileContainer, Footer } from './styles';
 
 import alert from '../../assets/alert.svg';
-// import api from '../../services/api';
+import api from '../../services/api';
 
 interface FileProps {
   file: File;
@@ -19,23 +19,29 @@ interface FileProps {
 }
 
 const Import: React.FC = () => {
-  // const [uploadedFiles, setUploadedFiles] = useState<FileProps[]>([]);
-  // const history = useHistory();
+  const [uploadedFiles, setUploadedFiles] = useState<FileProps[]>([]);
+  const history = useHistory();
 
   async function handleUpload(): Promise<void> {
-    // const data = new FormData();
-
-    // TODO
-
-    try {
-      // await api.post('/transactions/import', data);
-    } catch (err) {
-      // console.log(err.response.error);
-    }
+    await uploadedFiles.map(async updateFile => {
+      const data = new FormData();
+      data.append('file', updateFile.file);
+      try {
+        await api.post('/transactions/import', data);
+      } catch (err) {
+        console.log(err.response.error);
+      }
+    });
+    history.push('/');
   }
 
   function submitFile(files: File[]): void {
-    // TODO
+    const uploadedFile = files.map(file => ({
+      file,
+      name: file.name,
+      readableSize: filesize(file.size),
+    }));
+    setUploadedFiles([...uploadedFiles, ...uploadedFile]);
   }
 
   return (
@@ -45,8 +51,7 @@ const Import: React.FC = () => {
         <Title>Importar uma transação</Title>
         <ImportFileContainer>
           <Upload onUpload={submitFile} />
-          {/* {!!uploadedFiles.length && <FileList files={uploadedFiles} />} */}
-
+          {!!uploadedFiles.length && <FileList files={uploadedFiles} />}
           <Footer>
             <p>
               <img src={alert} alt="Alert" />

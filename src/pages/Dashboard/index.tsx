@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
-import { transitions } from 'polished';
+// import { transitions } from 'polished';
 import income from '../../assets/income.svg';
 import outcome from '../../assets/outcome.svg';
 import total from '../../assets/total.svg';
@@ -97,7 +96,7 @@ const Dashboard: React.FC = () => {
                     {formatValue(Number(transaction.value))}
                   </td>
                   <td>{transaction.category.title}</td>
-                  <td>{transaction.formattedDate}</td>
+                  <td>{formatDate(transaction.created_at)}</td>
                 </tr>
               ))}
             </tbody>
